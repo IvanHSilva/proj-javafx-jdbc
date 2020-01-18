@@ -112,7 +112,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			String sql = "SELECT department.* FROM department ORDER BY Name";
+			String sql = "SELECT department.* FROM department ORDER BY Id";
 			st = conn.prepareStatement(sql);
 			rs = st.executeQuery();
 
