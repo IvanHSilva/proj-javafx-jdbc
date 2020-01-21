@@ -21,4 +21,12 @@ public class DepartmentService {
 		//list.add(new Department(5, "Vestuário"));
 		//return list;
 	}
+	
+	public void saveOrUpdate(Department dep) {
+		if (dep.getId() == null) {
+			dao.insert(dep);
+		} else {
+			dao.update(dep);
+		}
+	}
 }
