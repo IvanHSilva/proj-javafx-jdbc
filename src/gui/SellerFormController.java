@@ -1,6 +1,8 @@
 package gui;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Seller;
@@ -37,7 +40,25 @@ public class SellerFormController implements Initializable {
 	private TextField txtName;
 	
 	@FXML
-	private Label lblError; 
+	private TextField txtEmail;
+
+	@FXML
+	private DatePicker dpBirthDate;
+
+	@FXML
+	private TextField txtBaseSalary;
+
+	@FXML
+	private Label lblErrorName; 
+
+	@FXML
+	private Label lblErrorEmail; 
+
+	@FXML
+	private Label lblBirthDate; 
+
+	@FXML
+	private Label lblBaseSalary; 
 
 	@FXML
 	private Button btSave; 
@@ -99,7 +120,10 @@ public class SellerFormController implements Initializable {
 	
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
-		Constraints.setTextFieldMaxLenght(txtName, 30);
+		Constraints.setTextFieldMaxLenght(txtName, 50);
+		Constraints.setTextFieldDouble(txtBaseSalary);
+		Constraints.setTextFieldMaxLenght(txtEmail, 70);
+		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
 	}
 	
 	public void setSeller(Seller entity) {
@@ -116,6 +140,11 @@ public class SellerFormController implements Initializable {
 		}
 		txtId.setText(String.valueOf(entity.getId()));
 		txtName.setText(String.valueOf(entity.getName()));
+		txtEmail.setText(String.valueOf(entity.getEmail()));
+		if (entity.getBirthDate() != null) {
+			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
+		}
+		txtBaseSalary.setText(String.valueOf(String.format("%.2f", entity.getBaseSalary())));
 	}
 	
 	public void subscribeDataChangeListener(DataChangeListener listener) {
@@ -125,7 +154,7 @@ public class SellerFormController implements Initializable {
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 		if (fields.contains("name")) {
-			lblError.setText(errors.get("name"));
+			lblErrorName.setText(errors.get("name"));
 		}
 	}
 }
