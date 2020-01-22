@@ -3,7 +3,6 @@ package gui.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
