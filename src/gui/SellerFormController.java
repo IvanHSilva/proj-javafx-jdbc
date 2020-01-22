@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -27,6 +29,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import model.entities.Department;
 import model.entities.Seller;
@@ -67,10 +71,10 @@ public class SellerFormController implements Initializable {
 	private Label lblErrorEmail;
 
 	@FXML
-	private Label lblBirthDate;
+	private Label lblErrorBirthDate;
 
 	@FXML
-	private Label lblBaseSalary;
+	private Label lblErrorBaseSalary;
 
 	@FXML
 	private Button btSave;
@@ -100,6 +104,16 @@ public class SellerFormController implements Initializable {
 		}
 	}
 
+	@FXML
+	private void onControlsKeyPressed(KeyEvent event) {
+	    if (event.getCode() == KeyCode.ENTER) {
+	    	btSave.fire();
+	    }
+	    if (event.getCode() == KeyCode.ESCAPE) {
+	    	btCancel.fire();
+	    }
+	}
+		
 	private void notifyDataChangeListeners() {
 		for (DataChangeListener listener : dataChangeListener) {
 			listener.onDataChanged();
@@ -112,10 +126,31 @@ public class SellerFormController implements Initializable {
 		ValidationException exception = new ValidationException("Erro de Validação");
 
 		sel.setId(Utils.tryParseToInt(txtId.getText()));
+
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "O campo não pode ser vazio");
 		}
 		sel.setName(txtName.getText());
+		
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "O campo não pode ser vazio");
+		}
+		sel.setEmail(txtEmail.getText());
+		
+		if (dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "O campo não pode ser vazio");
+		} else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			sel.setBirthDate(Date.from(instant));
+		}
+		
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "O campo não pode ser vazio");
+		}
+		sel.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		
+		sel.setDepartment(comboBoxDepartment.getValue());
+
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -183,9 +218,11 @@ public class SellerFormController implements Initializable {
 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
-		if (fields.contains("name")) {
-			lblErrorName.setText(errors.get("name"));
-		}
+		
+		lblErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+		lblErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
+		lblErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
+		lblErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
 	}
 
 	private void initializeComboBoxDepartment() {

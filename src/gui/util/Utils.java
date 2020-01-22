@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
@@ -17,13 +17,21 @@ import javafx.util.StringConverter;
 
 public class Utils {
 
-	public static Stage currentStage(ActionEvent event) {
+	public static Stage currentStage(Event event) {
 		return (Stage) ((Node) event.getSource()).getScene().getWindow();
 	}
 
 	public static Integer tryParseToInt(String str) {
 		try {
 			return Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	public static Double tryParseToDouble(String str) {
+		try {
+			return Double.parseDouble(str);
 		} catch (NumberFormatException e) {
 			return null;
 		}
